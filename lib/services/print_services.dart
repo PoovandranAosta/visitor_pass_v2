@@ -3,7 +3,7 @@ import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
 import 'common_functions.dart';
-
+import 'package:intl/intl.dart';
 String toAllCaps(String text) {
   return text.toUpperCase();
 }
@@ -180,6 +180,188 @@ Future<void> visitorPassView({
   await Printing.layoutPdf(onLayout: (format) async => pdf.save());
 }
 
+Future<void> visitorPassViewOld({
+  required String name,
+  required String company,
+  required String address,
+  required String phone,
+  required String vistorcheckin,
+  required String vsid,
+  required String purpose,
+  required String meetPerson,
+  required String meetCompany,
+}) async {
+  final pdf = pw.Document();
+
+  final checkinDateTime = DateTime.tryParse(vistorcheckin);
+  final formattedCheckin = checkinDateTime != null
+      ? DateFormat('dd-MM-yy HH:mm').format(checkinDateTime)
+      : vistorcheckin;
+
+
+  pdf.addPage(
+    pw.Page(
+      pageFormat:
+      PdfPageFormat(10 * PdfPageFormat.cm, 7.6 * PdfPageFormat.cm),
+      margin: pw.EdgeInsets.all(6),
+      build: (context) {
+        pw.Widget infoText(String label, String value) {
+          return pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Container(
+                width: 50,
+                child: pw.Text(
+                  '$label ',
+                  style: pw.TextStyle(
+                    fontSize: 11,
+                    fontWeight: pw.FontWeight.bold,
+                    color: PdfColors.black,
+                    font: pw.Font.helveticaBold(),
+                  ),
+                ),
+              ),
+              pw.Text(
+                ': ',
+                style: pw.TextStyle(
+                  fontSize: 11,
+                  color: PdfColors.black,
+                  fontWeight: pw.FontWeight.bold,
+                  font: pw.Font.helveticaBold(),
+                ),
+                maxLines: 1,
+                // overflow: pw.TextOverflow.clip,
+              ),
+              pw.Expanded(
+                child: pw.Text(
+                  '$value',
+                  style: pw.TextStyle(
+                    fontSize: 11,
+                    color: PdfColors.black,
+                    fontWeight: pw.FontWeight.bold,
+                    font: pw.Font.helveticaBold(),
+                  ),
+                  maxLines: 2,
+                  // overflow: pw.TextOverflow.clip,
+                ),
+              )
+            ],
+          );
+        }
+
+        return pw.Stack(
+          children: [
+            pw.Positioned(right: 5,bottom: 30,child:  pw.BarcodeWidget(
+                barcode: pw.Barcode.qrCode(),
+                data: vsid,
+                width: 60,
+                height: 60,
+                padding: pw.EdgeInsets.only(top: 6)
+            )),
+            pw.Padding(
+              padding:
+              const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.SizedBox(height: 2),
+                  pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Text(
+                          'VISITOR PASS',
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 14,
+                            font: pw.Font.helveticaBold(),
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColors.black,
+                          ),
+                        ),
+                        pw.Text(
+                          "$vsid   ",
+                          textAlign: pw.TextAlign.center,
+                          style: pw.TextStyle(
+                            fontSize: 10,
+                            font: pw.Font.helveticaBold(),
+                            fontWeight: pw.FontWeight.bold,
+                            color: PdfColors.black,
+                          ),
+                        ),
+                      ]),
+                  pw.SizedBox(height: 1),
+                  pw.Divider(height: 1, color: PdfColors.black),
+                  pw.SizedBox(height: 2),
+                  pw.Text(
+                    meetCompany.toUpperCase(),
+                    textAlign: pw.TextAlign.center,
+                    // maxLines: 1,
+                    style: pw.TextStyle(
+                      fontSize: 14,
+                      font: pw.Font.helveticaBold(),
+                      fontWeight: pw.FontWeight.bold,
+                      color: PdfColors.black,
+                    ),
+                  ),
+                  pw.SizedBox(height: 2),
+                  pw.Divider(height: 1, color: PdfColors.black),
+                  pw.SizedBox(height: 2),
+                  pw.Row(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Expanded(
+                        child: pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          mainAxisAlignment: pw.MainAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              name.toUpperCase(),
+                              maxLines: 1,
+                              style: pw.TextStyle(
+                                fontSize: 14,
+                                font: pw.Font.helveticaBold(),
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                            pw.SizedBox(height: 2),
+                            pw.Text(
+                              company,
+                              maxLines: 1,
+                              style: pw.TextStyle(
+                                fontSize: 10,
+                                font: pw.Font.helveticaBold(),
+                                fontWeight: pw.FontWeight.bold,
+                                color: PdfColors.black,
+                              ),
+                            ),
+                            pw.SizedBox(height: 4),
+                            infoText('Address', address),
+                            pw.SizedBox(height: 8),
+                            infoText('Mobile', phone),
+                            pw.SizedBox(height: 4),
+                            infoText('To Meet', meetPerson),
+                            pw.SizedBox(height: 4),
+                            infoText('Check-in', formattedCheckin),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    ),
+  );
+
+  await Printing.layoutPdf(onLayout: (format) async => pdf.save());
+}
+
+
+
 String passDataZpl({
   required String company,
   required String passId,
@@ -256,3 +438,5 @@ String passDataZpl({
 ^XZ
 """;
 }
+
+

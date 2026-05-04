@@ -6,6 +6,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:visitor_pass_v2/controllers/date_controller.dart';
 import 'package:visitor_pass_v2/controllers/visitors_data_controller.dart';
 import 'package:visitor_pass_v2/models/company_model.dart';
+import 'package:visitor_pass_v2/models/gate_model.dart';
 import 'package:visitor_pass_v2/models/visitors_data_model.dart';
 import 'package:visitor_pass_v2/widgets/custom_button.dart';
 import 'package:intl/intl.dart';
@@ -137,8 +138,6 @@ class _CustomReportState extends State<CustomReport> {
     return text.toUpperCase();
   }
 
-
-
   void _showDialog(VisitorsDataModel item) {
     showDialog(
       context: context,
@@ -187,16 +186,27 @@ class _CustomReportState extends State<CustomReport> {
                       ),
                       tooltip: "Print Pass",
                       onPressed: () {
-                        visitorPassView(
-                          company: toAllCaps(item.toCompanyName!),
-                          passId: "${item.vID}",
-                          name: toAllCaps(item.vName!),
-                          vCompany: "${item.vFrom}",
-                          smartAddress: truncateTextSmart(item.vAddress!),
-                          mobile: "${item.vMobile}",
-                          toMeet: "${item.toWhom}",
-                          smartCheckIn: formatCheckIn(item.vCheckIn!),
+                        visitorPassViewOld(
+                          name: item.vName!,
+                          company: item.vFrom!,
+                          address: item.vAddress!,
+                          phone: item.vMobile!,
+                          vistorcheckin: item.vCheckIn!,
+                          vsid: item.vID.toString(),
+                          purpose: item.toPurpose!,
+                          meetPerson: item.toWhom!,
+                          meetCompany: item.toCompanyName!,
                         );
+                        // visitorPassView(
+                        //   company: toAllCaps(item.toCompanyName!),
+                        //   passId: "${item.vID}",
+                        //   name: toAllCaps(item.vName!),
+                        //   vCompany: "${item.vFrom}",
+                        //   smartAddress: truncateTextSmart(item.vAddress!),
+                        //   mobile: "${item.vMobile}",
+                        //   toMeet: "${item.toWhom}",
+                        //   smartCheckIn: formatCheckIn(item.vCheckIn!),
+                        // );
 
                         Navigator.of(context).pop();
                       },
@@ -230,7 +240,7 @@ class _CustomReportState extends State<CustomReport> {
                         _gate(),
                         Obx(() {
                           final selected =
-                              visitorsDataController.selectedCompany.value;
+                              visitorsDataController.selectedGate.value;
 
                           if (selected != null) {
                             return _button(widget.btnText, item);
@@ -294,18 +304,18 @@ class _CustomReportState extends State<CustomReport> {
   Widget _gate() {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: CommonDropdown<CompanyModel>(
-        items: visitorsDataController.companyList,
+      child: CommonDropdown<GateModel>(
+        items: visitorsDataController.gateList,
         selectedValue:
-            visitorsDataController.companyList.contains(
-              visitorsDataController.selectedCompany.value,
+            visitorsDataController.gateList.contains(
+              visitorsDataController.selectedGate.value,
             )
-            ? visitorsDataController.selectedCompany.value
+            ? visitorsDataController.selectedGate.value
             : null,
         labelText: 'Gate',
-        itemLabel: (CompanyModel item) => item.ccompanyname.toString(),
+        itemLabel: (GateModel item) => item.gatename.toString(),
         onChanged: (value) async {
-          visitorsDataController.selectedCompany.value = value;
+          visitorsDataController.selectedGate.value = value;
         },
         isRequired: true,
       ),

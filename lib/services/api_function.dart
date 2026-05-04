@@ -1,6 +1,7 @@
 import 'package:visitor_pass_v2/config/config.dart';
 import 'package:visitor_pass_v2/models/check_in_out_model.dart';
 import 'package:visitor_pass_v2/models/company_model.dart';
+import 'package:visitor_pass_v2/models/gate_model.dart';
 import 'package:visitor_pass_v2/models/login_model.dart';
 import 'package:visitor_pass_v2/models/login_user_model.dart';
 import 'package:visitor_pass_v2/models/pass_data_model.dart';
@@ -125,6 +126,14 @@ class ApiFunction {
       url: "/EMRIndia/wsEMR.asmx/Getdataset1",
       body: body,
       fromJson: (json) => SummaryReportModel.fromJson(json),
+    );
+  }
+
+  Future<List<GateModel>> fetchGate(Map<String, dynamic> body) {
+    return _service.apiCall<GateModel>(
+      url: "/EMRIndia/wsEMR.asmx/Getdataset1",
+      body: body,
+      fromJson: (json) => GateModel.fromJson(json),
     );
   }
 

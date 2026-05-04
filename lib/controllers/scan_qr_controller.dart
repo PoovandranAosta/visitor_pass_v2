@@ -148,16 +148,27 @@ class ScanQrController extends GetxController {
   Future<void> printPass(PassDataModel pass) async {
     if (kIsWeb) {
       print("Web App Print");
-      visitorPassView(
-        company: pass.toCompanyName!,
-        passId: pass.vID.toString(),
+      visitorPassViewOld(
         name: pass.vName!,
-        vCompany: pass.vFrom!,
-        smartAddress: pass.vAddress!,
-        mobile: pass.vMobile!,
-        toMeet: pass.toWhom!,
-        smartCheckIn: pass.vCheckIn!,
+        company: pass.vFrom!,
+        address: pass.vAddress!,
+        phone: pass.vMobile!,
+        vistorcheckin: pass.vCheckIn!,
+        vsid: pass.vID.toString(),
+        purpose: pass.toPurpose!,
+        meetPerson: pass.toWhom!,
+        meetCompany: pass.toCompanyName!,
       );
+      // visitorPassView(
+      //   company: pass.toCompanyName!,
+      //   passId: pass.vID.toString(),
+      //   name: pass.vName!,
+      //   vCompany: pass.vFrom!,
+      //   smartAddress: pass.vAddress!,
+      //   mobile: pass.vMobile!,
+      //   toMeet: pass.toWhom!,
+      //   smartCheckIn: pass.vCheckIn!,
+      // );
       return;
     }
 

@@ -5,6 +5,7 @@ import 'package:visitor_pass_v2/controllers/date_controller.dart';
 import 'package:visitor_pass_v2/models/visitors_data_model.dart';
 
 import '../models/company_model.dart';
+import '../models/gate_model.dart';
 import '../models/pass_data_model.dart';
 import '../services/api_function.dart';
 
@@ -17,25 +18,19 @@ class VisitorsDataController extends GetxController {
 
   fetchData() {
     fetchCompany();
+    fetchGate();
   }
 
   RxList<CompanyModel> companyList = <CompanyModel>[].obs;
+  RxList<GateModel> gateList = <GateModel>[].obs;
 
   Rx<CompanyModel?> selectedCompany = Rx(null);
+  Rx<GateModel?> selectedGate = Rx(null);
 
   RxList<PassDataModel> passDetailList = <PassDataModel>[].obs;
 
   // Loading
   final isLoadingPassDetail = false.obs;
-
-  Future<void> fetchCompany() async {
-    final data = await _apiFunction.fetchCompanyList({
-      "strQuery": "exec ASTIL_MApps.dbo.SP_tblvstrcompany_MAPPS @opt = 1",
-      "strCon": "EMR_CONSTR",
-    });
-    companyList.assignAll(data);
-    print("Company List : $companyList");
-  }
 
   final ApiFunction _apiFunction = ApiFunction();
 
@@ -90,28 +85,31 @@ class VisitorsDataController extends GetxController {
     } else {
       actionClicked.value = await _apiFunction.checkInOutExit({
         "strQuery":
-            "exec astil_mapps.dbo.sp_visitors_checking @opt = $opt, @vid = '$passId', @igateid = '${selectedCompany.value?.iCID}'",
+            "exec astil_mapps.dbo.sp_visitors_checking @opt = $opt, @vid = '$passId', @igateid = '${selectedGate.value?.gateid}'",
         "strCon": "EMR_CONSTR",
       });
     }
     print("Check In - Out - Exit  : ${actionClicked.value}");
   }
+  Future<void> fetchCompany() async {
+    final data = await _apiFunction.fetchCompanyList({
+      "strQuery": "exec ASTIL_MApps.dbo.SP_tblvstrcompany_MAPPS @opt = 1",
+      "strCon": "EMR_CONSTR",
+    });
+    companyList.assignAll(data);
+    print("Company List : $companyList");
+  }
 
-  // Future<void> onClickExit(passId) async {
-  //   actionClicked.value = await _apiFunction.checkInOutExit({
-  //     "strQuery":
-  //         "exec astil_mapps.dbo.sp_visitors_checking @opt = 4, @vid = '$passId', @igateid = '${selectedCompany.value?.iCID}'",
-  //     "strCon": "EMR_CONSTR",
-  //   });
-  //
-  //   print({
-  //     "strQuery":
-  //         "exec astil_mapps.dbo.sp_visitors_checking @opt = 4, @vid = '$passId', @igateid = '${selectedCompany.value?.iCID}'",
-  //     "strCon": "EMR_CONSTR",
-  //   });
-  //
-  //   print("CheckIn  : ${actionClicked.value}");
-  // }
+  fetchGate() async {
+    final data = await _apiFunction.fetchGate({
+      "strQuery":
+      "exec astil_mapps.dbo.sp_visitors_checking @opt = 5",
+      "strCon": "EMR_CONSTR",
+    });
+    gateList.assignAll(data);
+    print("Gate List : $gateList");
+  }
+
 
   fetchPassDetails(passId) async {
     final data = await _apiFunction.getPassDetailV2({
