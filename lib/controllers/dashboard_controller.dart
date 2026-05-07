@@ -55,6 +55,6 @@ class DashBoardController extends GetxController {
 
 
   generateQrAttender(title, url) {
-    _pdfServices.visitorQrPdf(title: title, url: url);
+    _pdfServices.visitorQrPdf(url: url);
   }
 }

@@ -290,6 +290,7 @@ class _VisitorScreenState extends State<VisitorScreen> {
                         backgroundColor: AppColors.primary,
                         sufIcon: Icon(Icons.send, color: Colors.white),
                         isEnabled: visitorEntryController.isSubmitEnabled.value,
+                        isLoading: visitorEntryController.isLoading.value,
                         // disabledColor: Colors.grey,
                         text: "Submit",
                         onPressed: () async {
